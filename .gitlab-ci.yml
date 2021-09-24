@@ -1,0 +1,53 @@
+stages:
+  - byte-compile
+  - test
+  - artifact
+
+variables:
+  VERSION: "0.0.1"
+  PKG: "islisp-mode-${VERSION}.tar.gz"
+
+default:
+  before_script:
+    - apt-get update && apt-get install -y make
+
+
+byte-compile:27.1:
+  stage: byte-compile
+  image: silex/emacs:27.1
+  script:
+    - make compile-test
+
+test:27.1:
+  stage: test
+  image: silex/emacs:27.1
+  script:
+    - make test
+
+lint:27.1:
+  stage: test
+  image: silex/emacs:27.1
+  script:
+    - make lint
+
+test:26.3:
+  stage: test
+  image: silex/emacs:26.3
+  script:
+    - make test
+
+lint:26.3:
+  stage: test
+  image: silex/emacs:26.3
+  script:
+    - make lint
+
+artifact:
+  stage: artifact
+  image: silex/emacs:27.1
+  script:
+    - make package
+  artifacts:
+    paths:
+      - $PKG
+    expire_in: 1 week
