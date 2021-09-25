@@ -1,4 +1,4 @@
-;;; islisp-mode.el ---  islisp-mode            -*- lexical-binding: t; -*-
+;;; islisp-mode.el ---  Major mode for ISLisp programming.            -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2021 Fermin Munoz
 
@@ -6,7 +6,7 @@
 ;; Maintainer: Fermin Munoz <fmfs@posteo.net>
 ;; Created: 24 Sep 2021
 ;; Version: 0.0.1
-;; Keywords: 
+;; Keywords: islisp, lisp, programming
 ;; URL: 
 ;; Package-Requires: ((emacs "26.3"))
 ;; License: GPL-3.0-or-later
@@ -33,6 +33,166 @@
 
 ;;;; The requires
 
+(require 'font-lock)
+(require 'lisp-mode)
+
+(defgroup islisp nil
+  "ISLisp support."
+  :group 'languages)
+
+(defcustom islisp-executable "/usr/local/bin/eisl"
+  "Absolute path of the ISLisp executable.
+The default value makes reference to Easy-ISLisp."
+  :type '(file :must-match t)
+  :group 'islisp)
+
+(defcustom islisp-repl-debug-p t
+  "Whether to enable debug mode in the REPL."
+  :type 'boolean
+  :group 'islisp)
+
+(defvar islisp-mode-map (make-sparse-keymap))
+
+;;(define-key islisp-mode-map (kbd "C-c C-d") 'islisp-describe-symbol)
+
+(define-key islisp-mode-map (kbd "C-c C-i") 'islisp-repl)
+(define-key islisp-mode-map (kbd "C-c M-q") 'islisp-indent-region)
+
+;; Inferior-islisp keybindings
+(define-key islisp-mode-map (kbd "M-C-x") 'inferior-islisp-send-definition)
+(define-key islisp-mode-map (kbd "C-x C-e") 'inferior-islisp-send-last-sexp)
+(define-key islisp-mode-map (kbd "C-c C-e") 'inferior-islisp-send-definition)
+(define-key islisp-mode-map (kbd "C-c M-e") 'inferior-islisp-send-definition-and-go)
+(define-key islisp-mode-map (kbd "C-c C-r") 'inferior-islisp-send-region)
+(define-key islisp-mode-map (kbd "C-c M-r") 'inferior-islisp-send-region-and-go)
+(define-key islisp-mode-map (kbd "C-c C-l") 'inferior-islisp-load-file)
+(define-key islisp-mode-map (kbd "C-c C-x") 'inferior-islisp-switch-to-picolisp)
+
+(defconst islisp-mode-symbol-regexp lisp-mode-symbol-regexp)
+
+(defun islisp-mode-variables ()
+  "ISLisp major mode default variables."
+  (set-syntax-table lisp-mode-syntax-table)
+  (setq-local paragraph-ignore-fill-prefix t
+	      fill-paragraph-function 'lisp-fill-paragraph
+	      adaptive-fill-function #'lisp-adaptive-fill
+	      indent-line-function 'lisp-indent-line
+	      indent-region-function 'lisp-indent-region
+	      comment-indent-function #'lisp-comment-indent
+	      outline-level 'lisp-outline-level
+	      add-log-current-defun-function #'lisp-current-defun-name
+	      comment-start ";"
+	      comment-start-skip ";+ *"
+	      comment-add 1		
+	      comment-column 40
+	      comment-use-syntax t
+	      multibyte-syntax-as-symbol t
+	      font-lock-defaults
+	      `(islisp-font-lock-keywords
+		nil nil nil nil
+		(font-lock-syntactic-face-function
+		 . lisp-font-lock-syntactic-face-function))))
+
+(defvar islisp-font-lock-keywords-regex
+  (regexp-opt
+   '("-" "*" "/=" "+" "<" "<=" "=" ">" ">="
+     "abs" "append" "apply" "aref" "arithmetic-error-operands"
+     "arithmetic-error-operation" "array-dimensions" "assoc" "atan"
+     "atan2" "atanh" "atom" "basic-array-p" "basic-array*-p"
+     "basic-vector-p" "call-next-method" "car" "cdr" "ceiling"
+     "char-index" "char/=" "char<" "char<=" "char="
+     "char>" "char>=" "characterp" "class-of" "close"
+     "condition-continuable" "cons" "consp" "continue-condition"
+     "cos" "cosh" "create-array" "create-list"
+     "create-string-input-stream"
+     "create-string-output-stream" "create-string" "create-vector"
+     "create"
+     "div" "domain-error-object" "domain-error-expected-class"
+     "dummyp" "elt" "eq" "eql" "equal" "error-output" "error"
+     "eval" "exp" "expt" "file-length" "file-position" "finish-output"
+     "float" "floatp" "floor" "format-char" "format-fresh-line"
+     "format-float" "format-integer" "format-object" "format-tab"
+     "format"
+     "funcall" "functionp" "garef" "gbc" "gcd" "general-array*-p"
+     "general-vector-p" "generic-function-p" "gensym"
+     "get-internal-real-time"
+     "get-internal-run-time"
+     "get-output-stream-string" "get-universal-time" "hdmp" "identity"
+     "initialize-object*" "input-stream-p" "instancep" "integerp"
+     "internal-time-units-per-second" "isqrt" "lcm" "length" "list"
+     "listp" "load" "log" "map-into" "mapc" "mapcar" "mapcan"
+     "mapcon" "mapl" "maplist" "max" "member" "min" "mod"
+     "next-method-p" "not" "nreverse" "null" "numberp"
+     "open-input-file" "open-io-file" "open-output-file" "open-stream-p"
+     "output-stream-p" "parse-error-string" "parse-error-expected-class"
+     "parse-number" "preview-char" "prin1" "print" "probe-file"
+     "property" "quit" "quotient" "read-byte" "read-char" "read-line"
+     "read" "reciprocal" "remove-property" "reverse" "round"
+     "set-aref"
+     "set-car" "set-cdr" "set-elt" "set-file-position" "set-garef"
+     "set-property" "signal-condition" "simple-error-format-argument"
+     "simple-error-format-string" "sin" "sinh" "slot-value" "sqrt"
+     "standard-input" "standard-output" "stream-error-stream" "streamp"
+     "stream-ready-p" "string-append" "string-index" "string/="
+     "string<" "string<=" "string=" "string>" "string>=" "stringp"
+     "subclassp"
+     "subseq" "symbolp" "tan" "tanh" "truncate"
+     "undefined-entity-name"
+     "undefined-entity-namespace" "vector" "write-byte" "import"
+     "lambda" "labels" "flet" "let" "let*" "setq" "setf"
+     "dynamic" "set-dynamic" "function" "function*" "symbol-function" "class"
+     "and" "or" "if" "cond" "while" "for" "block" "return-from"
+     "case" "case-using" "progn" "dynamic-let" "ignore-errors" "catch" "throw"
+     "tagbody" "go" "unwind-protect" "with-standard-input"
+     "with-standard-output" "with-error-output" "with-handler"
+     "convert" "with-open-input-file" "with-open-output-file"
+     "with-open-io-file" "the" "assure" "time" "trace" "untrace"
+     "defmodule" "defpublic" "modulesubst")
+   t))
+
+(defvar islisp-def-keywords
+  (regexp-opt
+   '("defconstant" "defglobal" "defdynamic")
+   t))
+
+(defvar islisp-func-def-keywords
+  (regexp-opt
+   '("defun" "defmethod" "defmacro"
+     "defgeneric" "defclass" "defgeneric*")
+   t))
+
+(defvar islisp-font-lock-keywords
+  `((,(concat "(" islisp-font-lock-keywords-regex "\\_>")
+     (1 'font-lock-keyword-face t))
+    (,(concat "\\_<:" lisp-mode-symbol-regexp "\\_>")
+     (0 'font-lock-type-face t))
+    (,(concat "(" (regexp-opt '("cerror") t) "\\_>")
+     (1 'font-lock-warning-face))
+    (,(concat "(" islisp-def-keywords "\\_>"
+	      ;; Any whitespace and defined object.
+	      "[ \t']*"
+	      "\\(([ \t']*\\)?" ;; An opening paren.
+	      "\\(\\(setf\\)[ \t]+" lisp-mode-symbol-regexp
+	      "\\|" lisp-mode-symbol-regexp "\\)?")
+     (1 'font-lock-keyword-face)
+     (3 'font-lock-variable-name-face nil t))
+    (,(concat "(" islisp-func-def-keywords "\\_>"
+	      ;; Any whitespace and defined object.
+	      "[ \t']*"
+	      "\\(([ \t']*\\)?" ;; An opening paren.
+	      "\\(\\(setf\\)[ \t]+" lisp-mode-symbol-regexp
+	      "\\|" lisp-mode-symbol-regexp "\\)?")
+     (1 'font-lock-keyword-face)
+     (3 'font-lock-function-name-face nil t))))
+
+;;;###autoload
+(define-derived-mode islisp-mode prog-mode "ISLisp" 
+  "Major mode for editing ISLisp code"
+  (islisp-mode-variables)
+  (setq-local 
+   find-tag-default-function 'lisp-find-tag-default
+   comment-start-skip
+   "\\(\\(^\\|[^\\\\\n]\\)\\(\\\\\\\\\\)*\\)\\(;+\\|#|\\) *"))
 
 (provide 'islisp-mode)
 ;;; islisp-mode.el ends here
