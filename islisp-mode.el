@@ -185,6 +185,7 @@ The default value makes reference to Easy-ISLisp."
 (defun islisp-repl()
   "Start a ISLisp REPL or switch to it."
   (interactive)
+  (require 'inferior-islisp)
   (if (get-buffer inferior-islisp-buffer)
       (switch-to-buffer inferior-islisp-buffer)
     (inferior-islisp)))
