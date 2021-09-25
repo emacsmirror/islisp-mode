@@ -1,8 +1,53 @@
+#+html: <p align="center"><img src="logo/islisp-black-tr.gif" /></p>
 * islisp-mode
 
 ** Features
+   + ISLisp major-mode with custom map keybindings
+   + Inferior-mode for REPL integration 
+   + Syntax highlighting
+   + Interactive REPL commands (eg: ~islisp-eval-defun~)
+
 ** Install 
+*** Source
+To install, put this repository somewhere in your Emacs load path, and add a require to your main Emacs elisp file:
+#+BEGIN_SRC emacs-lisp
+(require 'islisp-mode)
+#+END_SRC
+
+To add a custom location to the load path:
+#+BEGIN_SRC emacs-lisp
+   (add-to-list 'load-path "/path/to/islisp-mode/")
+#+END_SRC
+
 ** Usage
+   The major mode will detect .lsp extension files as ISLisp files and start the syntax highlighting.
+
+   It is recommended to use ~inferior-islisp-mode~ alongside ~islisp-mode~ for better integration.
+
+   A normal workflow can be:
+   + Open or create a .lsp file
+   + Launch the repl with  =M-x= ~islisp-repl~
+     This will initialize the inferior mode, and load a ISLisp REPL.
+
+     The defaul implementation executable is [[https://github.com/sasagawa888/eisl][Easy-ISLisp]], it can be change in ~inferior-islisp-command-line~.
+
+   + Now, back to the .lsp buffer, you can start to send code to the REPL, (eg: with ~islisp-eval-defun~)
+
+** Commands
+*** islisp-mode
+
+  | Key combination | Function name         | Explanation                                                                  |
+  |-----------------+-----------------------+------------------------------------------------------------------------------|
+  | C-M-x           | islisp-eval-defun     | Send the current defun to the inferior ISLisp process.                       |
+  | C-c C-k         | islisp-compile-file   | Compile a ISLisp file in the inferior ISLisp process. (Easy-ISLisp specific) |
+  | C-c C-l         | islisp-load-file      | Load a ISLisp file into the inferior ISLisp process.  (Easy-ISLisp specific) |
+  | C-c C-r         | islisp-eval-region    | Send the current region to the inferior ISLisp process.                      |
+  | C-c M-q         | indent-region         | Indent the current region                                                    |
+  | C-c TAB         | islisp-repl           | Start a ISLisp REPL or switch to it.                                         |
+  | C-x C-e         | islisp-eval-last-sexp | Send the previous sexp to the inferior ISLisp process.                       |
+
+   
+
 ** License
 #+begin_example
   General Public License Version 3 (GPLv3)
