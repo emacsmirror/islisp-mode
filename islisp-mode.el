@@ -194,5 +194,8 @@ The default value makes reference to Easy-ISLisp."
    comment-start-skip
    "\\(\\(^\\|[^\\\\\n]\\)\\(\\\\\\\\\\)*\\)\\(;+\\|#|\\) *"))
 
+(advice-add 'islisp-mode :after #'(lambda ()
+			      (setq-local font-lock-keywords-case-fold-search t)))
+
 (provide 'islisp-mode)
 ;;; islisp-mode.el ends here
