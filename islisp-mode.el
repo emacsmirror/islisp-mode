@@ -56,17 +56,14 @@ The default value makes reference to Easy-ISLisp."
 ;;(define-key islisp-mode-map (kbd "C-c C-d") 'islisp-describe-symbol)
 
 (define-key islisp-mode-map (kbd "C-c C-i") 'islisp-repl)
-(define-key islisp-mode-map (kbd "C-c M-q") 'islisp-indent-region)
+(define-key islisp-mode-map (kbd "C-c M-q") 'indent-region)
 
 ;; Inferior-islisp keybindings
-(define-key islisp-mode-map (kbd "M-C-x") 'inferior-islisp-send-definition)
-(define-key islisp-mode-map (kbd "C-x C-e") 'inferior-islisp-send-last-sexp)
-(define-key islisp-mode-map (kbd "C-c C-e") 'inferior-islisp-send-definition)
-(define-key islisp-mode-map (kbd "C-c M-e") 'inferior-islisp-send-definition-and-go)
-(define-key islisp-mode-map (kbd "C-c C-r") 'inferior-islisp-send-region)
-(define-key islisp-mode-map (kbd "C-c M-r") 'inferior-islisp-send-region-and-go)
-(define-key islisp-mode-map (kbd "C-c C-l") 'inferior-islisp-load-file)
-(define-key islisp-mode-map (kbd "C-c C-x") 'inferior-islisp-switch-to-picolisp)
+(define-key islisp-mode-map (kbd "M-C-x") 'islisp-eval-defun)
+(define-key islisp-mode-map (kbd "C-x C-e") 'islisp-eval-last-sexp)
+(define-key islisp-mode-map (kbd "C-c C-r") 'islisp-eval-region)
+(define-key islisp-mode-map (kbd "C-c C-l") 'islisp-load-file)
+(define-key islisp-mode-map (kbd "C-c C-k") 'islisp-compile-file)
 
 (defconst islisp-mode-symbol-regexp lisp-mode-symbol-regexp)
 
@@ -118,7 +115,7 @@ The default value makes reference to Easy-ISLisp."
      "get-internal-real-time"
      "get-internal-run-time"
      "get-output-stream-string" "get-universal-time" "hdmp" "identity"
-     "initialize-object*" "input-stream-p" "instancep" "integerp"
+     "initialize-object" "input-stream-p" "instancep" "integerp"
      "internal-time-units-per-second" "isqrt" "lcm" "length" "list"
      "listp" "load" "log" "map-into" "mapc" "mapcar" "mapcan"
      "mapcon" "mapl" "maplist" "max" "member" "min" "mod"
@@ -184,6 +181,13 @@ The default value makes reference to Easy-ISLisp."
 	      "\\|" lisp-mode-symbol-regexp "\\)?")
      (1 'font-lock-keyword-face)
      (3 'font-lock-function-name-face nil t))))
+
+(defun islisp-repl()
+  "Start a ISLisp REPL or switch to it."
+  (interactive)
+  (if (get-buffer inferior-islisp-buffer)
+      (switch-to-buffer inferior-islisp-buffer)
+    (inferior-islisp)))
 
 ;;;###autoload
 (define-derived-mode islisp-mode prog-mode "ISLisp" 
