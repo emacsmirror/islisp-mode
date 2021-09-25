@@ -201,5 +201,7 @@ The default value makes reference to Easy-ISLisp."
 (advice-add 'islisp-mode :after #'(lambda ()
 			      (setq-local font-lock-keywords-case-fold-search t)))
 
+(add-to-list 'auto-mode-alist '("\\.lsp\\'" . islisp-mode))
+
 (provide 'islisp-mode)
 ;;; islisp-mode.el ends here
