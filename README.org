@@ -20,6 +20,8 @@ To add a custom location to the load path:
 #+END_SRC
 
 ** Usage
+   + Example video, [[https://vimeo.com/614514131][here]]
+
    The major mode will detect .lsp extension files as ISLisp files and start the syntax highlighting.
 
    It is recommended to use ~inferior-islisp-mode~ alongside ~islisp-mode~ for better integration.
