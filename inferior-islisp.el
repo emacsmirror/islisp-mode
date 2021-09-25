@@ -5,7 +5,7 @@
 ;; Author: Fermin Munoz
 ;; Maintainer: Fermin Munoz <fmfs@posteo.net>
 ;; Created: 24 Sep 2021
-;; Version: 0.0.1
+;; Version: 0.1.0
 ;; Keywords: islisp, lisp, programming
 ;; URL: 
 ;; Package-Requires: ((emacs "26.3"))
