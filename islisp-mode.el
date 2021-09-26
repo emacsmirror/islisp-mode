@@ -35,6 +35,7 @@
 
 (require 'font-lock)
 (require 'lisp-mode)
+(require 'islisp-hyperdraft)
 
 (defgroup islisp nil
   "ISLisp support."
@@ -68,6 +69,7 @@ directory."
 (define-key islisp-mode-map (kbd "C-c C-r") 'islisp-eval-region)
 (define-key islisp-mode-map (kbd "C-c C-l") 'islisp-load-file)
 (define-key islisp-mode-map (kbd "C-c C-k") 'islisp-compile-file)
+(define-key islisp-mode-map (kbd "C-c C-d") 'islisp-lookup-documentation)
 
 (defun islisp--create-mode-menu ()
   "Internal function to create or recreate the plisp-mode menu."
@@ -76,6 +78,7 @@ directory."
       ["Eval last sexp" islisp-eval-last-sexp :keys "C-x C-e"]
       ["Eval function" islisp-eval-defun t  :keys "M-C-x"]
       ["Eval region" islisp-eval-region t  :keys "M-C-x"]
+      ["Lookup Documentation" islisp-lookup-documentation t  :keys "C-c C-d"]
       "--"
       ["ISLisp REPL" islisp-repl t :keys "C-c C-i"]
       ["Comment/Uncomment region" comment-line t :keys "C-x C-;"]
