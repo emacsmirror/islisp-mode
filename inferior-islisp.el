@@ -7,7 +7,7 @@
 ;; Created: 24 Sep 2021
 ;; Version: 0.1.0
 ;; Keywords: islisp, lisp, programming
-;; URL: 
+;; URL: https://gitlab.com/sasanidas/islisp-mode
 ;; Package-Requires: ((emacs "26.3"))
 ;; License: GPL-3.0-or-later
 
@@ -46,11 +46,6 @@
   :type 'string
   :group 'inferior-islisp)
 
-(defcustom inferior-islisp-command-line-args "-r"
-  "Command line for calling an inferior islisp process."
-  :type 'string
-  :group 'inferior-islisp)
-
 (defcustom inferior-islisp-source-modes '(islisp-mode)
   "List of modes which indicate a buffer contains ISLisp source code."
   :type '(repeat function)
@@ -62,9 +57,7 @@
   :group 'inferior-islisp)
 
 (defcustom inferior-islisp-load-command "(load \"%s\")\n"
-  "Format-string for building a ISLisp expression to load a file.
-This is NOT an standard function, but it is present in some
-implementations."
+  "Format-string for building a ISLisp expression to load a file."
   :type 'string
   :group 'inferior-islisp)
 
@@ -94,7 +87,7 @@ describing the last `islisp-load-file' or `islisp-compile-file' command.")
   (comint-send-string (inferior-islisp-proc) (concat string "\n")))
 
 (defun islisp-do-defun (do-region)
-  "Send the current defun to the inferior Lisp process."
+  "Send the current defun in DO-REGION to the inferior Lisp process."
   (save-excursion
     (beginning-of-defun)
     (forward-sexp)
@@ -166,7 +159,8 @@ describing the last `islisp-load-file' or `islisp-compile-file' command.")
   (setq-local comint-prompt-regexp inferior-islisp-prompt
 	      mode-line-process '(":%s")
 	      comint-get-old-input (function lisp-get-old-input)
-	      comint-prompt-read-only t))
+	      comint-prompt-read-only t)
+  (islisp-use-implementation))
 
 
 (provide 'inferior-islisp)
