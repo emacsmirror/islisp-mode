@@ -102,11 +102,9 @@ describing the last `islisp-load-file' or `islisp-compile-file' command.")
 
 (defun islisp-eval-last-sexp (&optional _and-go)
   "Send the previous sexp to the inferior ISLisp process."
-  (interactive "P")
+  (interactive "p")
   (let* ((close (point-max))
 	 (start (save-excursion
-		  ;; consider the character right before eol given that
-		  ;; point may be placed there, e.g. in visual state
 		  (when (and (eolp) (not (bolp)))
 		    (backward-char))
 		  (setq close (1- (scan-lists (point) 1 1)))
@@ -123,7 +121,7 @@ describing the last `islisp-load-file' or `islisp-compile-file' command.")
 ;;TODO: This is Easy-ISLisp specific
 (defun islisp-load-file (file-name)
   "Load a ISLisp file with FILE-NAME into the inferior ISLisp process."
-  (interactive "F")
+  (interactive "f")
   (comint-check-source file-name) 
   (setq islisp-prev-l/c-dir/file (cons (file-name-directory    file-name)
 				       (file-name-nondirectory file-name)))
@@ -133,6 +131,7 @@ describing the last `islisp-load-file' or `islisp-compile-file' command.")
   (comint-send-string (inferior-islisp-proc)
 		      (format "(format (standard-output) \"Loaded: %s\")\n" file-name)))
 
+;;TODO: This is Easy-ISLisp specific
 (defun islisp-compile-file (file-name)
   "Compile a ISLisp FILE-NAME in the inferior ISLisp process."
   (interactive (comint-get-source "Compile ISLisp file: " islisp-prev-l/c-dir/file
@@ -144,7 +143,7 @@ describing the last `islisp-load-file' or `islisp-compile-file' command.")
   (comint-send-string (inferior-islisp-proc) (concat "(compile-file \"" file-name "\")\n")))
 
 (defun inferior-islisp ()
-  ""
+  "Launch the inferior-islisp comint buffer."
   (interactive)
   (when (not (comint-check-proc "*inferior-islisp*"))
     (set-buffer (apply (function make-comint)

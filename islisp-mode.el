@@ -40,13 +40,7 @@
   "ISLisp support."
   :group 'languages)
 
-(defcustom islisp-executable ""
-  "Absolute path of the ISLisp executable.
-The executable can be set by the selected implementation."
-  :type 'file
-  :group 'islisp)
-
-;;TODO: Make this a choose list.
+;;TODO: Make this a list.
 (defcustom islisp-current-implementation 'easy-islisp
   "Current mode implementation.
 Each implementation may add custom functionality,
@@ -74,6 +68,21 @@ directory."
 (define-key islisp-mode-map (kbd "C-c C-r") 'islisp-eval-region)
 (define-key islisp-mode-map (kbd "C-c C-l") 'islisp-load-file)
 (define-key islisp-mode-map (kbd "C-c C-k") 'islisp-compile-file)
+
+(defun islisp--create-mode-menu ()
+  "Internal function to create or recreate the plisp-mode menu."
+  (easy-menu-define islisp-menu islisp-mode-map "Menu bar entry for `islisp-mode'"
+    '("ISLisp"
+      ["Eval last sexp" islisp-eval-last-sexp :keys "C-x C-e"]
+      ["Eval function" islisp-eval-defun t  :keys "M-C-x"]
+      ["Eval region" islisp-eval-region t  :keys "M-C-x"]
+      "--"
+      ["ISLisp REPL" islisp-repl t :keys "C-c C-i"]
+      ["Comment/Uncomment region" comment-line t :keys "C-x C-;"]
+      ["Load file" islisp-load-file t  :keys "C-c C-l"]
+      ["Compile file" islisp-compile-file t :keys "C-c C-k"]
+      "--"
+      ["Customize" (customize-group 'islisp) t])))
 
 (defconst islisp-mode-symbol-regexp lisp-mode-symbol-regexp)
 
@@ -203,7 +212,7 @@ directory."
   (require 'inferior-islisp)
   (if (and (stringp inferior-islisp-buffer)
 	   (get-buffer inferior-islisp-buffer))
-      (switch-to-buffer inferior-islisp-buffer)
+      (pop-to-buffer inferior-islisp-buffer)
     (inferior-islisp)))
 
 ;;;###autoload
@@ -214,6 +223,7 @@ directory."
    find-tag-default-function 'lisp-find-tag-default
    comment-start-skip
    "\\(\\(^\\|[^\\\\\n]\\)\\(\\\\\\\\\\)*\\)\\(;+\\|#|\\) *")
+  (islisp--create-mode-menu)
   (islisp-use-implementation))
 
 (advice-add 'islisp-mode :after #'(lambda ()
