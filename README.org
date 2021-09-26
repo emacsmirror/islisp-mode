@@ -6,6 +6,7 @@
    + Inferior-mode for REPL integration 
    + Syntax highlighting
    + Interactive REPL commands (eg: ~islisp-eval-defun~)
+   + Interactive ISLispHyperDraft documentation search
 
 ** Install 
 *** Source
@@ -38,15 +39,16 @@ To add a custom location to the load path:
 ** Commands
 *** islisp-mode
 
-  | Key combination | Function name         | Explanation                                                                  |
-  |-----------------+-----------------------+------------------------------------------------------------------------------|
-  | C-M-x           | islisp-eval-defun     | Send the current defun to the inferior ISLisp process.                       |
-  | C-c C-k         | islisp-compile-file   | Compile a ISLisp file in the inferior ISLisp process. (Easy-ISLisp specific) |
-  | C-c C-l         | islisp-load-file      | Load a ISLisp file into the inferior ISLisp process.  (Easy-ISLisp specific) |
-  | C-c C-r         | islisp-eval-region    | Send the current region to the inferior ISLisp process.                      |
-  | C-c M-q         | indent-region         | Indent the current region                                                    |
-  | C-c TAB         | islisp-repl           | Start a ISLisp REPL or switch to it.                                         |
-  | C-x C-e         | islisp-eval-last-sexp | Send the previous sexp to the inferior ISLisp process.                       |
+  | Key combination | Function name               | Explanation                                                                  |
+  |-----------------+-----------------------------+------------------------------------------------------------------------------|
+  | C-M-x           | islisp-eval-defun           | Send the current defun to the inferior ISLisp process.                       |
+  | C-c C-k         | islisp-compile-file         | Compile a ISLisp file in the inferior ISLisp process. (Easy-ISLisp specific) |
+  | C-c C-l         | islisp-load-file            | Load a ISLisp file into the inferior ISLisp process.  (Easy-ISLisp specific) |
+  | C-c C-r         | islisp-eval-region          | Send the current region to the inferior ISLisp process.                      |
+  | C-c M-q         | indent-region               | Indent the current region                                                    |
+  | C-c C-d         | islisp-lookup-documentation | Search for documentation in ISLispHyperDraft                                 |
+  | C-c TAB         | islisp-repl                 | Start a ISLisp REPL or switch to it.                                         |
+  | C-x C-e         | islisp-eval-last-sexp       | Send the previous sexp to the inferior ISLisp process.                       |
 
    
 
