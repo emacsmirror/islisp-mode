@@ -2,7 +2,7 @@
 
 
 (defglobal tmp-directory "/tmp")
-(defglobal string-location-file "/tmp/easy-islisp-formatter331")
+(defglobal string-location-file "/tmp/easy-islisp-formatter331.lsp")
 
 (defun end-of-file-p (x)
   (eq x 'eof))
@@ -33,8 +33,7 @@
     (while (not (end-of-file-p temp-line))
       (format output-stream temp-line)
       (if add-new-line (format output-stream "\\n"))
-      (setf temp-line (read-line temp-stream nil 'eof))
-      )
+      (setf temp-line (read-line temp-stream nil 'eof)))
     (close temp-stream)
     (format output-stream output)
     (get-output-stream-string output-stream)))
@@ -58,10 +57,10 @@
     temp-file-content))
 
 (defun easy-islisp-format-buffer ()
-  (if (probe-file "/tmp/easy-islisp-formatter331.lsp")
+  (if (probe-file string-location-file)
       (progn
-	(formatter "/tmp/easy-islisp-formatter331.lsp")
-	(format (standard-output) (get-file-content "/tmp/easy-islisp-formatter331.lsp" nil)))
+	(formatter string-location-file)
+	(format (standard-output) (get-file-content string-location-file nil)))
     (error "Easy-islisp file not found.")))
 
 (easy-islisp-format-buffer)
