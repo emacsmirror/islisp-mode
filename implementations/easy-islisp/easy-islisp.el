@@ -51,12 +51,20 @@
   :type 'boolean
   :group 'easy-islisp)
 
+(defcustom islisp-library-directory (if (getenv "EASY_ISLISP")
+					(getenv "EASY_ISLISP")
+				      (expand-file-name "library" (concat  (getenv "HOME") "/eisl") ))
+  "Easy-ISLisp default library directory."
+  :type 'string
+  :group 'easy-islisp)
+
+(defvar easy-islisp--load-location (file-name-directory load-file-name))
 
 (defvar easy-islisp-keywords
   '("defmodule" "defpublic" "modulesubst" "trace" "untrace"
     "time" "random-real" "random" "heapdump" "instance"
     "nconc" "fast-address" "macroexpand-1" "macroexpand-all"
-    "backtrace"
+    "backtrace" "system"
     "break" "edit" "set-editor" "wiringpi-setup-gpio"
     "delay-microseconds"
     "wiringpi-spi-setup-ch-speed" "pwm-set-mode" "pwm-set-range"
@@ -73,6 +81,51 @@
     "gpu-sgd" "gpu-momentum" "gpu-adagrad" "gpu-rms" "gpu-adam"
     "gpu-pooling" "gpu-unpooling"
     "gpu-random-select" "gpu-nanalizer" "gpu-copy"))
+
+
+(defun easy-islisp-format-region (start end &optional _and-go)
+  (interactive "r\nP")
+  (let ((region-content (buffer-substring-no-properties start end))
+	(formatter-file (expand-file-name "easy-format.lsp" easy-islisp--load-location))
+	(com-file "/tmp/easy-islisp-formatter331.lsp"))
+    (with-temp-buffer
+      (insert region-content)
+      (write-file com-file))
+    (shell-command-to-string (concat (car inferior-islisp-command-line)
+				     " -s " (expand-file-name "easy-format.lsp" easy-islisp--load-location)))
+    (delete-region start end)
+    (with-temp-buffer 
+      (insert-file-contents com-file)
+      (setf region-content (buffer-substring-no-properties (point-min) (point-max))))
+    (insert region-content)
+    (delete-file com-file)
+    nil))
+
+(defun easy-islisp-format-buffer ()
+  (interactive)
+  (easy-islisp-format-region (point-min) (point-max)))
+
+(defun easy-islisp-macroexpand-region (start end &optional _and-go)
+  "Macroexpand the current region."
+  (interactive "r\nP")
+  (comint-send-string
+   (inferior-islisp-proc)
+   (format "(macroexpand-all (quote %s))\n"
+	   (buffer-substring-no-properties start end))))
+
+(defun easy-islisp-macroexpand-sexp (&optional _and-go)
+  "Macroexpand the current sexp."
+  (interactive "P")
+  (let* ((close (point-max))
+	 (start (save-excursion
+		  (when (and (eolp) (not (bolp)))
+		    (backward-char))
+		  (setq close (1- (scan-lists (point) 1 1)))
+		  (when (< close (line-end-position))
+		    (goto-char (1+ close))
+		    (backward-list)
+		    (point)))))
+    (islisp-macroexpand-region start (+ (point) 1))))
 
 (defun easy-islisp-init ()
   "Easy-ISLisp initialisation function."
@@ -101,7 +154,19 @@
 		      "\\|" lisp-mode-symbol-regexp "\\)?")
 	     (1 'font-lock-keyword-face)
 	     (3 'font-lock-function-name-face nil t)))))
-  (islisp-set-fl-keys))
+
+  (islisp-set-fl-keys)
+  (define-key islisp-mode-map (kbd "C-c M-m") 'easy-islisp-macroexpand-sexp)
+  (define-key islisp-mode-map (kbd "C-c M-r") 'easy-islisp-macroexpand-region)
+  (define-key islisp-mode-map (kbd "C-c C-f") 'easy-islisp-format-region)
+  (define-key islisp-mode-map (kbd "C-c C-b") 'easy-islisp-format-buffer)
+  (easy-menu-add-item 'islisp-menu nil
+		      '("Easy-ISlisp"
+			["Expand S-exp" easy-islisp-macroexpand-sexp t  :keys "C-c M-m"]
+			["Expand region" easy-islisp-macroexpand-region t  :keys "C-c M-r"]
+			"--"
+			["Format region" easy-islisp-format-region t :keys "C-c C-f"]
+			["Format buffer"  easy-islisp-format-buffer t :keys "C-c C-b"])))
 
 
 

@@ -63,7 +63,7 @@ directory."
 (define-key islisp-mode-map (kbd "C-c C-i") 'islisp-repl)
 (define-key islisp-mode-map (kbd "C-c M-q") 'indent-region)
 
-;; Inferior-islisp keybindings
+;; islisp-mode keybindings
 (define-key islisp-mode-map (kbd "M-C-x") 'islisp-eval-defun)
 (define-key islisp-mode-map (kbd "C-x C-e") 'islisp-eval-last-sexp)
 (define-key islisp-mode-map (kbd "C-c C-r") 'islisp-eval-region)
@@ -84,8 +84,7 @@ directory."
       ["Comment/Uncomment region" comment-line t :keys "C-x C-;"]
       ["Load file" islisp-load-file t  :keys "C-c C-l"]
       ["Compile file" islisp-compile-file t :keys "C-c C-k"]
-      "--"
-      ["Customize" (customize-group 'islisp) t])))
+      "--")))
 
 (defconst islisp-mode-symbol-regexp lisp-mode-symbol-regexp)
 
