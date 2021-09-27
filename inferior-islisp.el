@@ -41,7 +41,7 @@
   "Run a ISLisp process in a buffer."
   :group 'islisp)
 
-(defcustom inferior-islisp-command-line '("/usr/local/bin/eisl")
+(defcustom inferior-islisp-command-line '("eisl")
   "Command line for calling an inferior islisp process."
   :type 'string
   :group 'inferior-islisp)
@@ -51,7 +51,7 @@
   :type '(repeat function)
   :group 'inferior-islisp)
 
-(defcustom inferior-islisp-prompt "^> *"
+(defcustom inferior-islisp-prompt "^>>? *"
   "Command line for calling an inferior islisp process."
   :type 'string
   :group 'inferior-islisp)
