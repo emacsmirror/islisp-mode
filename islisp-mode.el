@@ -62,14 +62,8 @@ directory."
 
 (define-key islisp-mode-map (kbd "C-c C-i") 'islisp-repl)
 (define-key islisp-mode-map (kbd "C-c M-q") 'indent-region)
+(define-key islisp-mode-map (kbd "C-c C-d") 'islisp-hyperdraft-lookup-documentation)
 
-;; islisp-mode keybindings
-(define-key islisp-mode-map (kbd "M-C-x") 'islisp-eval-defun)
-(define-key islisp-mode-map (kbd "C-x C-e") 'islisp-eval-last-sexp)
-(define-key islisp-mode-map (kbd "C-c C-r") 'islisp-eval-region)
-(define-key islisp-mode-map (kbd "C-c C-l") 'islisp-load-file)
-(define-key islisp-mode-map (kbd "C-c C-k") 'islisp-compile-file)
-(define-key islisp-mode-map (kbd "C-c C-d") 'islisp-lookup-documentation)
 
 (defun islisp--create-mode-menu ()
   "Internal function to create or recreate the plisp-mode menu."

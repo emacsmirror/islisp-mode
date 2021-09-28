@@ -1,4 +1,4 @@
-;;; inferior-islisp-.el ---  Run inferior ISLisp processes            -*- lexical-binding: t; -*-
+;;; inferior-islisp.el ---  Run inferior ISLisp processes            -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2021 Fermin Munoz
 
@@ -66,7 +66,7 @@
 
 (defvar inferior-islisp-buffer nil "")
 
-(defvar islisp-prev-l/c-dir/file nil
+(defvar inferior-islisp-prev-l-c-dir-file nil
   "Record last directory and file used in loading or compiling.
 This holds a cons cell of the form `(DIRECTORY . FILE)'
 describing the last `islisp-load-file' or `islisp-compile-file' command.")
@@ -76,17 +76,17 @@ describing the last `islisp-load-file' or `islisp-compile-file' command.")
     (or proc
 	(error "No ISLisp subprocess; see variable `inferior-islisp-buffer'"))))
 
-(defun islisp-eval-region (start end &optional _and-go)
+(defun inferior-islisp-eval-region (start end &optional _and-go)
   "Send the current region from START to END the inferior ISLisp process."
   (interactive "r\nP")
   (comint-send-region (inferior-islisp-proc) start end)
   (comint-send-string (inferior-islisp-proc) "\n"))
 
-(defun islisp-eval-string (string)
+(defun inferior-islisp-eval-string (string)
   "Send STRING to the inferior Lisp process to be executed."
   (comint-send-string (inferior-islisp-proc) (concat string "\n")))
 
-(defun islisp-do-defun (do-region)
+(defun inferior-islisp-do-defun (do-region)
   "Send the current defun in DO-REGION to the inferior Lisp process."
   (save-excursion
     (beginning-of-defun)
@@ -95,12 +95,12 @@ describing the last `islisp-load-file' or `islisp-compile-file' command.")
       (beginning-of-defun)
       (funcall do-region (point) end))))
 
-(defun islisp-eval-defun (&optional _and-go)
+(defun inferior-islisp-eval-defun (&optional _and-go)
   "Send the current defun to the inferior ISLisp process."
   (interactive "P")
-  (islisp-do-defun 'islisp-eval-region))
+  (islisp-do-defun 'inferior-islisp-eval-region))
 
-(defun islisp-eval-last-sexp (&optional _and-go)
+(defun inferior-islisp-eval-last-sexp (&optional _and-go)
   "Send the previous sexp to the inferior ISLisp process."
   (interactive "p")
   (let* ((close (point-max))
@@ -119,12 +119,12 @@ describing the last `islisp-load-file' or `islisp-compile-file' command.")
     (comint-send-string (inferior-islisp-proc) "\n")))
 
 ;;TODO: This is Easy-ISLisp specific
-(defun islisp-load-file (file-name)
+(defun inferior-islisp-load-file (file-name)
   "Load a ISLisp file with FILE-NAME into the inferior ISLisp process."
   (interactive "f")
   (comint-check-source file-name) 
-  (setq islisp-prev-l/c-dir/file (cons (file-name-directory    file-name)
-				       (file-name-nondirectory file-name)))
+  (setq inferior-islisp-prev-l-c-dir-file (cons (file-name-directory    file-name)
+						(file-name-nondirectory file-name)))
   (comint-send-string (inferior-islisp-proc)
 		      (format inferior-islisp-load-command file-name))
 
@@ -132,14 +132,14 @@ describing the last `islisp-load-file' or `islisp-compile-file' command.")
 		      (format "(format (standard-output) \"Loaded: %s\")\n" file-name)))
 
 ;;TODO: This is Easy-ISLisp specific
-(defun islisp-compile-file (file-name)
+(defun inferior-islisp-compile-file (file-name)
   "Compile a ISLisp FILE-NAME in the inferior ISLisp process."
-  (interactive (comint-get-source "Compile ISLisp file: " islisp-prev-l/c-dir/file
+  (interactive (comint-get-source "Compile ISLisp file: " inferior-islisp-prev-l-c-dir-file
 				  inferior-islisp-source-modes nil)) ; nil = don't need
 					; suffix .lisp
   (comint-check-source file-name) ; Check to see if buffer needs saved.
-  (setq islisp-prev-l/c-dir/file (cons (file-name-directory    file-name)
-				       (file-name-nondirectory file-name)))
+  (setq inferior-islisp-prev-l-c-dir-file (cons (file-name-directory    file-name)
+						(file-name-nondirectory file-name)))
   (comint-send-string (inferior-islisp-proc) (concat "(compile-file \"" file-name "\")\n")))
 
 (defun inferior-islisp ()
@@ -151,6 +151,13 @@ describing the last `islisp-load-file' or `islisp-compile-file' command.")
     (inferior-islisp-mode))
   (setq inferior-islisp-buffer "*inferior-islisp*")
   (pop-to-buffer-same-window "*inferior-islisp*"))
+
+;; islisp-mode keybindings
+(define-key islisp-mode-map (kbd "M-C-x") 'inferior-islisp-eval-defun)
+(define-key islisp-mode-map (kbd "C-x C-e") 'inferior-islisp-eval-last-sexp)
+(define-key islisp-mode-map (kbd "C-c C-r") 'inferior-islisp-eval-region)
+(define-key islisp-mode-map (kbd "C-c C-l") 'inferior-islisp-load-file)
+(define-key islisp-mode-map (kbd "C-c C-k") 'inferior-islisp-compile-file)
 
 (define-derived-mode inferior-islisp-mode comint-mode "Inferior ISLisp"
   ""

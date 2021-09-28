@@ -1,4 +1,4 @@
-;;; islisp-hyperdraft.el ---  islisp-mode hyperdraft interaction       -*- lexical-binding: t; -*-
+;;; islisp-hyperdraft.el ---  ISLisp hyperdraft interaction       -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2021 Fermin Munoz
 
@@ -175,7 +175,7 @@ something like \"file:/usr/local/doc/HyperDraft/islisp-v23.html\"."
     ("with-standard-output" . "#s_with_standard_output")
     ("write-byte" . "#f_write_byte") ("writer" . "#td_writer")))
 
-(defun islisp-lookup-documentation ()
+(defun islisp-hyperdraft-lookup-documentation ()
   (interactive)
   (let* ((csymbol (thing-at-point 'symbol t))
 	 (current-symbol (assoc csymbol  islisp-hyperdraft-symbols)))

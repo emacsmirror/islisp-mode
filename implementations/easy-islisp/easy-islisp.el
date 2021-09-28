@@ -84,6 +84,7 @@
 
 
 (defun easy-islisp-format-region (start end &optional _and-go)
+  "Format the selected region from START to END using the easy-islisp library formatter."
   (interactive "r\nP")
   (let ((region-content (buffer-substring-no-properties start end))
 	(formatter-file (expand-file-name "easy-format.lsp" easy-islisp--load-location))
@@ -102,11 +103,12 @@
     nil))
 
 (defun easy-islisp-format-buffer ()
+  "Format the current buffer using the easy-islisp library formatter."
   (interactive)
   (easy-islisp-format-region (point-min) (point-max)))
 
 (defun easy-islisp-macroexpand-region (start end &optional _and-go)
-  "Macroexpand the current region."
+  "Macroexpand the current region, from START to END."
   (interactive "r\nP")
   (comint-send-string
    (inferior-islisp-proc)
