@@ -99,9 +99,52 @@ directory."
 	      comment-column 40
 	      comment-use-syntax t
 	      multibyte-syntax-as-symbol t
-	      completion-ignored-extensions (remove ".o" completion-ignored-extensions))
+	      completion-ignored-extensions (remove ".o" completion-ignored-extensions)
+	      imenu-generic-expression islisp-imenu-generic-expression)
   (islisp-set-fl-keys)
   (islisp--create-mode-menu))
+
+(defvar islisp-imenu-generic-expression
+  (list
+   (list (purecopy "Functions")
+	 (purecopy (concat "^\\s-*("
+			   (regexp-opt
+			    '("defun")
+			    t)
+			   "\\s-+\\(" islisp-mode-symbol-regexp "\\)"))
+	 2)
+   (list (purecopy "Generics/Methods")
+	 (purecopy (concat "^\\s-*("
+			   (regexp-opt
+			    '("defgeneric" "defmethod")
+			    t)
+			   "\\s-+\\(" islisp-mode-symbol-regexp "\\)"))
+	 2)
+   (list (purecopy "Macros")
+	 (purecopy (concat "^\\s-*("
+			   (regexp-opt
+			    '("defmacro")
+			    t)
+			   "\\s-+\\(" islisp-mode-symbol-regexp "\\)"))
+	 2)
+   (list (purecopy "Variables")
+	 (purecopy (concat "^\\s-*("
+			   (eval-when-compile
+			     (regexp-opt
+			      '("defglobal" "")
+                              t))
+			   "\\s-+\\(" islisp-mode-symbol-regexp "\\)"))
+	 2)
+   (list (purecopy "Types")
+	 (purecopy (concat "^\\s-*("
+			   (eval-when-compile
+			     (regexp-opt
+			      '("defclass")
+                              t))
+			   "\\s-+'?\\(" islisp-mode-symbol-regexp "\\)"))
+	 2))
+  "Imenu generic expression for ISLisp mode.  See `imenu-generic-expression'.")
+
 
 (defun islisp-set-fl-keys ()
   (setq-local
