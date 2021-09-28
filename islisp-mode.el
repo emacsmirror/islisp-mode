@@ -106,7 +106,8 @@ directory."
 	      comment-use-syntax t
 	      multibyte-syntax-as-symbol t
 	      completion-ignored-extensions (remove ".o" completion-ignored-extensions))
-  (islisp-set-fl-keys))
+  (islisp-set-fl-keys)
+  (islisp--create-mode-menu))
 
 (defun islisp-set-fl-keys ()
   (setq-local
@@ -225,7 +226,6 @@ directory."
    find-tag-default-function 'lisp-find-tag-default
    comment-start-skip
    "\\(\\(^\\|[^\\\\\n]\\)\\(\\\\\\\\\\)*\\)\\(;+\\|#|\\) *")
-  (islisp--create-mode-menu)
   (islisp-use-implementation))
 
 (advice-add 'islisp-mode :after #'(lambda ()
