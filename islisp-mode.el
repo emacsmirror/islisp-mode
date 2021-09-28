@@ -1,4 +1,4 @@
-;;; islisp-mode.el ---  Major mode for ISLisp programming.            -*- lexical-binding: t; -*-
+;;; islisp-mode.el ---  Major mode for ISLisp programming            -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2021 Fermin Munoz
 
