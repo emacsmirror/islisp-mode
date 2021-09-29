@@ -7,6 +7,9 @@
    + Syntax highlighting
    + Interactive REPL commands (eg: ~islisp-eval-defun~)
    + Interactive ISLispHyperDraft documentation search
+   + Implementations support (Easy-ISLisp)
+   + [[https://www.emacswiki.org/emacs/ImenuMode][Imenu]] support
+   + Advance features (autocompletions, tags support and symbol navigation)
 
 ** Install 
 *** Source
@@ -36,10 +39,10 @@ To add a custom location to the load path:
 
    + Now, back to the .lsp buffer, you can start to send code to the REPL, (eg: with ~islisp-eval-defun~)
 
-** Commands
-*** islisp-mode
 
-  | Key combination | Function name               | Explanation                                                                  |
+** Main commands
+
+  | Key Combination | Function Name               | Explanation                                                                  |
   |-----------------+-----------------------------+------------------------------------------------------------------------------|
   | C-M-x           | islisp-eval-defun           | Send the current defun to the inferior ISLisp process.                       |
   | C-c C-k         | islisp-compile-file         | Compile a ISLisp file in the inferior ISLisp process. (Easy-ISLisp specific) |
@@ -51,6 +54,48 @@ To add a custom location to the load path:
   | C-x C-e         | islisp-eval-last-sexp       | Send the previous sexp to the inferior ISLisp process.                       |
 
    
+
+
+** Implementations
+   Currently, the only supported inplementation is [[https://github.com/sasagawa888/eisl][Easy-ISLisp]], more will be supported in the future.
+
+*** Easy-ISLisp
+     [[https://github.com/sasagawa888/eisl][Easy-ISLisp(EISL)]] is an interpreter and compiler compatible with the ISLisp standard. EISL was written by Kenichi Sasagawa. 
+
+**** Features
+     + File compilation
+     + Buffer formatting
+     + Macroexpand
+     + Specific keyword syntax highlighting
+
+**** Specific commands
+
+  | Key Combination | Function Name                  | Explanation                                                        |
+  |-----------------+--------------------------------+--------------------------------------------------------------------|
+  | C-c M-m         | easy-islisp-macroexpand-sexp   | Macroexpand the current sexp.                                      |
+  | C-c  M-r        | easy-islisp-macroexpand-region | Macroexpand the current region                                     |
+  | C-c C-f         | easy-islisp-format-region      | Format the selected region using the easy-islisp library formatter |
+  | C-c C-b         | easy-islisp-format-buffer      | Format the current buffer using the easy-islisp libray formatter   |
+  
+** Advance features
+   This mode also incluse some "advance" features that enhance the basic major mode functionaly.
+
+   IMPORTANT: This features are NOT enable by default, to enable it, you should set the variable ~islisp-advance-features~ to ~t~.
+
+*** Tags integration
+
+  | Key Combination | Function Name                | Explanation                                            |
+  |-----------------+------------------------------+--------------------------------------------------------|
+  | C-c C-w         | islisp-tags-symbols-navigate | Find the workspace TAG definition                      |
+  | C-c TAB         | islisp-tags-autocomplete     | Show auto-completion at point using current tags table |
+  | C-c C-e         | islisp-tags-generate         | Generate current project tags, created with `etags'.   |
+
+(define-key islisp-mode-map (kbd "C-c C-w") 'islisp-tags-symbols-navigate)
+(define-key islisp-mode-map (kbd "C-c TAB") 'islisp-tags-autocomplete)
+(define-key islisp-mode-map (kbd "C-c C-e") 'islisp-tags-generate)
+
+  
+
 
 ** License
 #+begin_example

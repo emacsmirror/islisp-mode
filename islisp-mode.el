@@ -50,6 +50,11 @@ directory."
   :type 'symbol
   :group 'islisp)
 
+(defcustom islisp-advance-features nil
+  "Enable advance IDE-like features like autocompletion."
+  :type 'symbol
+  :group 'islisp)
+
 (defun islisp-use-implementation ()
   "Initialise the `islisp-current-implementation'."
   (funcall #'require islisp-current-implementation)
@@ -263,6 +268,13 @@ directory."
    find-tag-default-function 'lisp-find-tag-default
    comment-start-skip
    "\\(\\(^\\|[^\\\\\n]\\)\\(\\\\\\\\\\)*\\)\\(;+\\|#|\\) *")
+  (when islisp-advance-features
+    (require 'islisp-tags)
+    (easy-menu-add-item 'islisp-menu nil
+			'("Tags"
+			  ["Generate TAGS"  islisp-tags-generate t :keys "C-c g"]
+			  ["Symbols navigation" islisp-tags-symbols-navigate t  :keys "C-c w"]
+			  ["Tag auto-complete" islisp-tags-autocomplete t  :keys "C-c TAB"])))
   (islisp-use-implementation))
 
 (advice-add 'islisp-mode :after #'(lambda ()
