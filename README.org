@@ -39,6 +39,18 @@ To add a custom location to the load path:
 
    + Now, back to the .lsp buffer, you can start to send code to the REPL, (eg: with ~islisp-eval-defun~)
 
+*** Configuration example
+    #+BEGIN_SRC emacs-lisp
+      (add-to-list 'load-path "/path/to/islisp-mode/")
+      (require 'islisp-mode)
+
+      (setf
+      ;;; For local HyperDraft navigation
+       islisp-hyperdraft-root "file:/home/fermin/Programming/ISLispHyperDraft/islisp-v23.html"
+      ;;; Activate the advance features
+       islisp-advance-features t)
+    #+END_SRC
+
 
 ** Main commands
 
@@ -90,11 +102,6 @@ To add a custom location to the load path:
   | C-c TAB         | islisp-tags-autocomplete     | Show auto-completion at point using current tags table |
   | C-c C-e         | islisp-tags-generate         | Generate current project tags, created with `etags'.   |
 
-(define-key islisp-mode-map (kbd "C-c C-w") 'islisp-tags-symbols-navigate)
-(define-key islisp-mode-map (kbd "C-c TAB") 'islisp-tags-autocomplete)
-(define-key islisp-mode-map (kbd "C-c C-e") 'islisp-tags-generate)
-
-  
 
 
 ** License
