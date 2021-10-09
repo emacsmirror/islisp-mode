@@ -1,5 +1,4 @@
-
-;;; easy-islisp.el ---  Specific Easy-ISLisp functionality.            -*- lexical-binding: t; -*-
+;;; easy-islisp.el ---  Specific Easy-ISLisp functionality            -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2021 Fermin Munoz
 
@@ -8,7 +7,7 @@
 ;; Created: 24 Sep 2021
 ;; Version: 0.2.0
 ;; Keywords: islisp, lisp, programming
-;; URL: 
+;; URL: https://gitlab.com/sasanidas/islisp-mode
 ;; Package-Requires: ((emacs "26.3"))
 ;; License: GPL-3.0-or-later
 
@@ -51,9 +50,9 @@
   :type 'boolean
   :group 'easy-islisp)
 
-(defcustom islisp-library-directory (if (getenv "EASY_ISLISP")
-					(getenv "EASY_ISLISP")
-				      (expand-file-name "library" (concat  (getenv "HOME") "/eisl") ))
+(defcustom easy-islisp-library-directory (if (getenv "EASY_ISLISP")
+					     (getenv "EASY_ISLISP")
+					   (expand-file-name "library" (concat  (getenv "HOME") "/eisl") ))
   "Easy-ISLisp default library directory."
   :type 'string
   :group 'easy-islisp)

@@ -8,7 +8,6 @@
 ;; Version: 0.2.0
 ;; Keywords: islisp, lisp, programming
 ;; URL: https://gitlab.com/sasanidas/islisp-mode
-;; Package-Requires: ((emacs "26.3"))
 ;; License: GPL-3.0-or-later
 
 ;; This program is free software; you can redistribute it and/or modify
@@ -51,7 +50,7 @@ something like \"file:/usr/local/doc/HyperDraft/islisp-v23.html\"."
     ("=" . "#f_math_eq") (">" . "#f_gt") (">=" . "#f_gteq")
     ("`" . "#syn_backquote") ("|#" . "#comments") ("abs" . "#f_abs")
     ("and" . "#s_and") ("append" . "#f_append") ("apply" . "#f_apply")
-    ("aref" . "#f_aref") 
+    ("aref" . "#f_aref")
     ("arithmetic-error-operands" . "#f_arithmetic_error_operands")
     ("arithmetic-error-operation" . "#f_arithmetic_error_operation")
     ("array-dimensions" . "#f_array_dimensions") ("assignment" . "#variables")
@@ -176,6 +175,7 @@ something like \"file:/usr/local/doc/HyperDraft/islisp-v23.html\"."
     ("write-byte" . "#f_write_byte") ("writer" . "#td_writer")))
 
 (defun islisp-hyperdraft-lookup-documentation ()
+  "View symbol documentation from ISLispHyperDraft."
   (interactive)
   (let* ((csymbol (thing-at-point 'symbol t))
 	 (current-symbol (assoc csymbol  islisp-hyperdraft-symbols)))

@@ -65,9 +65,9 @@ directory."
 
 ;;(define-key islisp-mode-map (kbd "C-c C-d") 'islisp-describe-symbol)
 
-(define-key islisp-mode-map (kbd "C-c C-i") 'islisp-repl)
-(define-key islisp-mode-map (kbd "C-c M-q") 'indent-region)
-(define-key islisp-mode-map (kbd "C-c C-d") 'islisp-hyperdraft-lookup-documentation)
+(define-key islisp-mode-map (kbd "C-c C-i") #'islisp-repl)
+(define-key islisp-mode-map (kbd "C-c M-q") #'indent-region)
+(define-key islisp-mode-map (kbd "C-c C-d") #'islisp-hyperdraft-lookup-documentation)
 
 
 (defun islisp--create-mode-menu ()
@@ -86,29 +86,6 @@ directory."
       "--")))
 
 (defconst islisp-mode-symbol-regexp lisp-mode-symbol-regexp)
-
-(defun islisp-mode-variables ()
-  "ISLisp major mode default variables."
-  (set-syntax-table lisp-mode-syntax-table)
-  (setq-local paragraph-ignore-fill-prefix t
-	      fill-paragraph-function 'lisp-fill-paragraph
-	      adaptive-fill-function #'lisp-adaptive-fill
-	      indent-line-function 'lisp-indent-line
-	      indent-region-function 'lisp-indent-region
-	      comment-indent-function #'lisp-comment-indent
-	      outline-level 'lisp-outline-level
-	      add-log-current-defun-function #'lisp-current-defun-name
-	      comment-start ";"
-	      comment-start-skip ";+ *"
-	      comment-add 1
-	      comment-column 40
-	      comment-use-syntax t
-	      multibyte-syntax-as-symbol t
-	      completion-ignored-extensions (remove ".o" completion-ignored-extensions)
-	      imenu-generic-expression islisp-imenu-generic-expression)
-  (islisp-set-fl-keys)
-  (islisp--create-mode-menu))
-
 (defvar islisp-imenu-generic-expression
   (list
    (list (purecopy "Functions")
@@ -150,8 +127,31 @@ directory."
 	 2))
   "Imenu generic expression for ISLisp mode.  See `imenu-generic-expression'.")
 
+(defun islisp-mode-variables ()
+  "ISLisp major mode default variables."
+  (set-syntax-table lisp-mode-syntax-table)
+  (setq-local paragraph-ignore-fill-prefix t
+	      fill-paragraph-function 'lisp-fill-paragraph
+	      adaptive-fill-function #'lisp-adaptive-fill
+	      indent-line-function 'lisp-indent-line
+	      indent-region-function 'lisp-indent-region
+	      comment-indent-function #'lisp-comment-indent
+	      outline-level 'lisp-outline-level
+	      add-log-current-defun-function #'lisp-current-defun-name
+	      comment-start ";"
+	      comment-start-skip ";+ *"
+	      comment-add 1
+	      comment-column 40
+	      comment-use-syntax t
+	      multibyte-syntax-as-symbol t
+	      completion-ignored-extensions (remove ".o" completion-ignored-extensions)
+	      imenu-generic-expression islisp-imenu-generic-expression)
+  (islisp-set-fl-keys)
+  (islisp--create-mode-menu))
+
 
 (defun islisp-set-fl-keys ()
+  "Set the local font keywords."
   (setq-local
    font-lock-defaults `(islisp-font-lock-keywords
 		nil nil nil nil
@@ -277,8 +277,8 @@ directory."
 			  ["Tag auto-complete" islisp-tags-autocomplete t  :keys "C-c TAB"])))
   (islisp-use-implementation))
 
-(advice-add 'islisp-mode :after #'(lambda ()
-			      (setq-local font-lock-keywords-case-fold-search t)))
+(advice-add 'islisp-mode :after (lambda ()
+			    (setq-local font-lock-keywords-case-fold-search t)))
 
 (add-to-list 'auto-mode-alist '("\\.lsp\\'" . islisp-mode))
 

@@ -64,7 +64,8 @@
 (defvar inferior-islisp-mode-hook '()
   "Hook for customising Inferior ISLisp mode.")
 
-(defvar inferior-islisp-buffer nil "")
+(defvar inferior-islisp-buffer nil
+  "Inferior ISLisp buffer name.")
 
 (defvar inferior-islisp-prev-l-c-dir-file nil
   "Record last directory and file used in loading or compiling.
@@ -72,6 +73,7 @@ This holds a cons cell of the form `(DIRECTORY . FILE)'
 describing the last `islisp-load-file' or `islisp-compile-file' command.")
 
 (defun inferior-islisp-proc ()
+  "Return the `inferior-islisp-buffer' process."
   (let ((proc (get-buffer-process (get-buffer inferior-islisp-buffer))))
     (or proc
 	(error "No ISLisp subprocess; see variable `inferior-islisp-buffer'"))))
@@ -98,7 +100,7 @@ describing the last `islisp-load-file' or `islisp-compile-file' command.")
 (defun inferior-islisp-eval-defun (&optional _and-go)
   "Send the current defun to the inferior ISLisp process."
   (interactive "P")
-  (islisp-do-defun 'inferior-islisp-eval-region))
+  (inferior-islisp-do-defun 'inferior-islisp-eval-region))
 
 (defun inferior-islisp-eval-last-sexp (&optional _and-go)
   "Send the previous sexp to the inferior ISLisp process."
@@ -122,9 +124,9 @@ describing the last `islisp-load-file' or `islisp-compile-file' command.")
 (defun inferior-islisp-load-file (file-name)
   "Load a ISLisp file with FILE-NAME into the inferior ISLisp process."
   (interactive "f")
-  (comint-check-source file-name) 
+  (comint-check-source file-name)
   (setq inferior-islisp-prev-l-c-dir-file (cons (file-name-directory    file-name)
-						(file-name-nondirectory file-name)))
+				 (file-name-nondirectory file-name)))
   (comint-send-string (inferior-islisp-proc)
 		      (format inferior-islisp-load-command file-name))
 
@@ -135,15 +137,14 @@ describing the last `islisp-load-file' or `islisp-compile-file' command.")
 (defun inferior-islisp-compile-file (file-name)
   "Compile a ISLisp FILE-NAME in the inferior ISLisp process."
   (interactive (comint-get-source "Compile ISLisp file: " inferior-islisp-prev-l-c-dir-file
-				  inferior-islisp-source-modes nil)) ; nil = don't need
-					; suffix .lisp
-  (comint-check-source file-name) ; Check to see if buffer needs saved.
+				  inferior-islisp-source-modes nil))
+  (comint-check-source file-name)
   (setq inferior-islisp-prev-l-c-dir-file (cons (file-name-directory    file-name)
-						(file-name-nondirectory file-name)))
+				 (file-name-nondirectory file-name)))
   (comint-send-string (inferior-islisp-proc) (concat "(compile-file \"" file-name "\")\n")))
 
 (defun inferior-islisp ()
-  "Launch the inferior-islisp comint buffer."
+  "Launch the `inferior-islisp' comint buffer."
   (interactive)
   (when (not (comint-check-proc "*inferior-islisp*"))
     (set-buffer (apply (function make-comint)

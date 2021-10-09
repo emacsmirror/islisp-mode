@@ -89,7 +89,9 @@
 
 
 (defun islisp-tags--update-library (root)
-  (islisp-tags--generate-in islisp-library-directory (concat root "TAGS") t))
+  (if (boundp easy-islisp-library-directory)
+      (islisp-tags--generate-in easy-islisp-library-directory (concat root "TAGS") t)
+    (error "The current implementation doesn't support library files.")))
 
 (define-key islisp-mode-map (kbd "C-c C-w") 'islisp-tags-symbols-navigate)
 (define-key islisp-mode-map (kbd "C-c TAB") 'islisp-tags-autocomplete)
