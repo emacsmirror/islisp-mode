@@ -126,7 +126,7 @@
 		    (goto-char (1+ close))
 		    (backward-list)
 		    (point)))))
-    (islisp-macroexpand-region start (+ (point) 1))))
+    (easy-islisp-macroexpand-region start (+ (point) 1))))
 
 (defun easy-islisp-init ()
   "Easy-ISLisp initialisation function."
