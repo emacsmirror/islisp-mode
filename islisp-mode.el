@@ -77,7 +77,7 @@ directory."
       ["Eval last sexp" islisp-eval-last-sexp :keys "C-x C-e"]
       ["Eval function" islisp-eval-defun t  :keys "M-C-x"]
       ["Eval region" islisp-eval-region t  :keys "M-C-x"]
-      ["Lookup Documentation" islisp-lookup-documentation t  :keys "C-c C-d"]
+      ["Lookup Documentation" islisp-hyperdraft-lookup-documentation t  :keys "C-c C-d"]
       "--"
       ["ISLisp REPL" islisp-repl t :keys "C-c C-i"]
       ["Comment/Uncomment region" comment-line t :keys "C-x C-;"]
@@ -254,11 +254,14 @@ directory."
 (defun islisp-repl()
   "Start a ISLisp REPL or switch to it."
   (interactive)
-  (require 'inferior-islisp)
-  (if (and (stringp inferior-islisp-buffer)
-	   (get-buffer inferior-islisp-buffer))
-      (pop-to-buffer inferior-islisp-buffer)
-    (inferior-islisp)))
+  (if (fboundp 'inferior-islisp)
+      (progn
+	(require 'inferior-islisp)
+	(if (and (stringp inferior-islisp-buffer)
+		 (get-buffer inferior-islisp-buffer))
+	    (pop-to-buffer inferior-islisp-buffer)
+	  (inferior-islisp)))
+    (error "The package inferior-islisp is required to start the REPL.")))
 
 ;;;###autoload
 (define-derived-mode islisp-mode prog-mode "ISLisp"

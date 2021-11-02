@@ -45,6 +45,8 @@
   :type '(file :must-match t)
   :group 'easy-islisp)
 
+;;TODO: This is still NOT in use, the idea is to implement an interactive interface to
+;; https://github.com/sasagawa888/eisl/blob/master/documents/DEBUG.md
 (defcustom easy-islisp-repl-debug-p t
   "Whether to enable debug mode in the REPL."
   :type 'boolean
@@ -85,21 +87,27 @@
 (defun easy-islisp-format-region (start end &optional _and-go)
   "Format the selected region from START to END using the easy-islisp library formatter."
   (interactive "r\nP")
-  (let ((region-content (buffer-substring-no-properties start end))
-	(formatter-file (expand-file-name "easy-format.lsp" easy-islisp--load-location))
-	(com-file "/tmp/easy-islisp-formatter331.lsp"))
-    (with-temp-buffer
-      (insert region-content)
-      (write-file com-file))
-    (shell-command-to-string (concat (car inferior-islisp-command-line)
-				     " -s " (expand-file-name "easy-format.lsp" easy-islisp--load-location)))
-    (delete-region start end)
-    (with-temp-buffer 
-      (insert-file-contents com-file)
-      (setf region-content (buffer-substring-no-properties (point-min) (point-max))))
-    (insert region-content)
-    (delete-file com-file)
-    nil))
+  (if (fboundp 'inferior-islisp)
+      (progn
+	(require 'inferior-islisp)
+	(let ((region-content (buffer-substring-no-properties start end))
+	      (formatter-file (expand-file-name "easy-format.lsp" easy-islisp--load-location))
+	      ;; This file is the same as the one define in the global variable ~string-location-file~
+	      ;; in easy-format.lsp
+	      (com-file "/tmp/easy-islisp-formatter331.lsp"))
+	  (with-temp-buffer
+	    (insert region-content)
+	    (write-file com-file))
+	  (shell-command-to-string (concat (car inferior-islisp-command-line)
+					   " -s " formatter-file))
+	  (delete-region start end)
+	  (with-temp-buffer
+	    (insert-file-contents com-file)
+	    (setf region-content (buffer-substring-no-properties (point-min) (point-max))))
+	  (insert region-content)
+	  (delete-file com-file)
+	  nil))
+    (error "The package inferior-islisp is required format the buffer.")))
 
 (defun easy-islisp-format-buffer ()
   "Format the current buffer using the easy-islisp library formatter."
@@ -109,10 +117,13 @@
 (defun easy-islisp-macroexpand-region (start end &optional _and-go)
   "Macroexpand the current region, from START to END."
   (interactive "r\nP")
-  (comint-send-string
-   (inferior-islisp-proc)
-   (format "(macroexpand-all (quote %s))\n"
-	   (buffer-substring-no-properties start end))))
+  (if (fboundp 'inferior-islisp)
+      (progn
+	(comint-send-string
+	 (inferior-islisp-proc)
+	 (format "(macroexpand-all (quote %s))\n"
+		 (buffer-substring-no-properties start end))))
+    (error "The package inferior-islisp is required to macroexpand the region.")))
 
 (defun easy-islisp-macroexpand-sexp (&optional _and-go)
   "Macroexpand the current sexp."

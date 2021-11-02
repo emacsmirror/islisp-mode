@@ -8,7 +8,7 @@
 ;; Version: 0.2.0
 ;; Keywords: islisp, lisp, programming
 ;; URL: https://gitlab.com/sasanidas/islisp-mode
-;; Package-Requires: ((emacs "26.3"))
+;; Package-Requires: ((emacs "26.3") (islisp-mode "0.2"))
 ;; License: GPL-3.0-or-later
 
 ;; This program is free software; you can redistribute it and/or modify
@@ -126,7 +126,7 @@ describing the last `islisp-load-file' or `islisp-compile-file' command.")
   (interactive "f")
   (comint-check-source file-name)
   (setq inferior-islisp-prev-l-c-dir-file (cons (file-name-directory    file-name)
-				 (file-name-nondirectory file-name)))
+						(file-name-nondirectory file-name)))
   (comint-send-string (inferior-islisp-proc)
 		      (format inferior-islisp-load-command file-name))
 
@@ -140,7 +140,7 @@ describing the last `islisp-load-file' or `islisp-compile-file' command.")
 				  inferior-islisp-source-modes nil))
   (comint-check-source file-name)
   (setq inferior-islisp-prev-l-c-dir-file (cons (file-name-directory    file-name)
-				 (file-name-nondirectory file-name)))
+						(file-name-nondirectory file-name)))
   (comint-send-string (inferior-islisp-proc) (concat "(compile-file \"" file-name "\")\n")))
 
 (defun inferior-islisp ()

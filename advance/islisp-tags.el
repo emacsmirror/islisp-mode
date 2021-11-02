@@ -31,6 +31,7 @@
 (require 'etags)
 (require 'project)
 (require 'cl-lib)
+(require 'islisp-mode)
 
 ;;; Code:
 
@@ -77,8 +78,7 @@
 (defun islisp-tags-autocomplete ()
   "Show auto-completion at point using current tags table."
   (interactive)
-  (let ((current-prefix (buffer-substring-no-properties (islisp-tags--beginning) (point)))
-	(tags-table (tags-completion-table)))
+  (let ((tags-table (tags-completion-table)))
     (completion-in-region (islisp-tags--beginning) (point) tags-table)))
 
 (defun islisp-tags-symbols-navigate ()
