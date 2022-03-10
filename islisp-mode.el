@@ -55,34 +55,34 @@ directory."
   :type 'symbol
   :group 'islisp)
 
+(defvar islisp-mode-map (make-sparse-keymap))
+
+(defun islisp-mode-load-keymap (key-list)
+  (cl-loop for (key . def) in key-list
+	   when	(or (null (lookup-key islisp-mode-map key))
+		    (= (lookup-key islisp-mode-map key) 1))
+	   do (define-key islisp-mode-map key def)))
+
 (defun islisp-use-implementation ()
   "Initialise the `islisp-current-implementation'."
   (funcall #'require islisp-current-implementation)
   (funcall (intern
 	    (apply 'concat `(,(format "%S" islisp-current-implementation) "-init")))))
 
-(defvar islisp-mode-map (make-sparse-keymap))
-
-;;(define-key islisp-mode-map (kbd "C-c C-d") 'islisp-describe-symbol)
-
-(define-key islisp-mode-map (kbd "C-c C-i") #'islisp-repl)
-(define-key islisp-mode-map (kbd "C-c M-q") #'indent-region)
-(define-key islisp-mode-map (kbd "C-c C-d") #'islisp-hyperdraft-lookup-documentation)
-
 
 (defun islisp--create-mode-menu ()
   "Internal function to create or recreate the plisp-mode menu."
   (easy-menu-define islisp-menu islisp-mode-map "Menu bar entry for `islisp-mode'"
     '("ISLisp"
-      ["Eval last sexp" islisp-eval-last-sexp :keys "C-x C-e"]
-      ["Eval function" islisp-eval-defun t  :keys "M-C-x"]
-      ["Eval region" islisp-eval-region t  :keys "M-C-x"]
+      ["Eval last sexp" inferior-islisp-eval-last-sexp :keys "C-x C-e"]
+      ["Eval function" inferior-islisp-eval-defun t  :keys "M-C-x"]
+      ["Eval region" inferior-islisp-eval-region t  :keys "M-C-x"]
       ["Lookup Documentation" islisp-hyperdraft-lookup-documentation t  :keys "C-c C-d"]
       "--"
-      ["ISLisp REPL" islisp-repl t :keys "C-c C-i"]
+      ["ISLisp REPL" islisp-repl t :keys "C-c C-r"]
       ["Comment/Uncomment region" comment-line t :keys "C-x C-;"]
-      ["Load file" islisp-load-file t  :keys "C-c C-l"]
-      ["Compile file" islisp-compile-file t :keys "C-c C-k"]
+      ["Load file" inferior-islisp-load-file t  :keys "C-c C-l"]
+      ["Compile file" inferior-islisp-compile-file t :keys "C-c C-k"]
       "--")))
 
 (defconst islisp-mode-symbol-regexp lisp-mode-symbol-regexp)
@@ -147,7 +147,15 @@ directory."
 	      completion-ignored-extensions (remove ".o" completion-ignored-extensions)
 	      imenu-generic-expression islisp-imenu-generic-expression)
   (islisp-set-fl-keys)
-  (islisp--create-mode-menu))
+  (islisp-mode-load-keymap `((,(kbd "C-c C-z") . islisp-repl)
+		       (,(kbd "C-c C-c") . islisp-hyperdraft-lookup-documentation)
+		       (,(kbd "M-C-x")   . inferior-islisp-eval-defun)
+		       (,(kbd "C-x C-e") . inferior-islisp-eval-last-sexp)
+		       (,(kbd "C-c C-r") . inferior-islisp-eval-region)
+		       (,(kbd "C-c C-l") . inferior-islisp-load-file)
+		       (,(kbd "C-c C-k") . inferior-islisp-compile-file)))
+  (unless (boundp 'islisp-menu)
+    (islisp--create-mode-menu)))
 
 
 (defun islisp-set-fl-keys ()
@@ -251,17 +259,15 @@ directory."
      (1 'font-lock-keyword-face)
      (3 'font-lock-function-name-face nil t))))
 
+;;;###autoload
 (defun islisp-repl()
   "Start a ISLisp REPL or switch to it."
   (interactive)
-  (if (fboundp 'inferior-islisp)
-      (progn
-	(require 'inferior-islisp)
-	(if (and (stringp inferior-islisp-buffer)
-		 (get-buffer inferior-islisp-buffer))
-	    (pop-to-buffer inferior-islisp-buffer)
-	  (inferior-islisp)))
-    (error "The package inferior-islisp is required to start the REPL.")))
+  (require 'inferior-islisp)
+  (if (and (stringp inferior-islisp-buffer)
+	   (get-buffer inferior-islisp-buffer))
+      (pop-to-buffer inferior-islisp-buffer)
+    (inferior-islisp)))
 
 ;;;###autoload
 (define-derived-mode islisp-mode prog-mode "ISLisp"
@@ -275,8 +281,8 @@ directory."
     (require 'islisp-tags)
     (easy-menu-add-item 'islisp-menu nil
 			'("Tags"
-			  ["Generate TAGS"  islisp-tags-generate t :keys "C-c g"]
-			  ["Symbols navigation" islisp-tags-symbols-navigate t  :keys "C-c w"]
+			  ["Generate TAGS"  islisp-tags-generate t :keys "C-c C-e"]
+			  ["Symbols navigation" islisp-tags-symbols-navigate t  :keys "C-c C-w"]
 			  ["Tag auto-complete" islisp-tags-autocomplete t  :keys "C-c TAB"])))
   (islisp-use-implementation))
 

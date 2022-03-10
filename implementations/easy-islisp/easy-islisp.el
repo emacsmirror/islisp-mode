@@ -139,8 +139,7 @@
 		    (point)))))
     (easy-islisp-macroexpand-region start (+ (point) 1))))
 
-(defun easy-islisp-init ()
-  "Easy-ISLisp initialisation function."
+(defun easy-islisp-init-font-lock ()
   (let ((new-font-lock (cl-concatenate
 			'list islisp-general-keywords easy-islisp-keywords)))
     (setf islisp-font-lock-keywords
@@ -165,13 +164,15 @@
 		      "\\(\\(setf\\)[ \t]+" lisp-mode-symbol-regexp
 		      "\\|" lisp-mode-symbol-regexp "\\)?")
 	     (1 'font-lock-keyword-face)
-	     (3 'font-lock-function-name-face nil t)))))
+	     (3 'font-lock-function-name-face nil t))))))
 
-  (islisp-set-fl-keys)
-  (define-key islisp-mode-map (kbd "C-c M-m") 'easy-islisp-macroexpand-sexp)
-  (define-key islisp-mode-map (kbd "C-c M-r") 'easy-islisp-macroexpand-region)
-  (define-key islisp-mode-map (kbd "C-c C-f") 'easy-islisp-format-region)
-  (define-key islisp-mode-map (kbd "C-c C-b") 'easy-islisp-format-buffer)
+(defun easy-islisp-init ()
+  "Easy-ISLisp initialisation function."
+  (easy-islisp-init-font-lock)
+  (islisp-mode-load-keymap `((,(kbd "C-c M-m") . easy-islisp-macroexpand-sexp)
+			     (,(kbd "C-c M-r") . easy-islisp-macroexpand-region)
+			     (,(kbd "C-c C-f") . easy-islisp-format-region)
+			     (,(kbd "C-c C-b") . easy-islisp-format-buffer)))
   (easy-menu-add-item 'islisp-menu nil
 		      '("Easy-ISlisp"
 			["Expand S-exp" easy-islisp-macroexpand-sexp t  :keys "C-c M-m"]

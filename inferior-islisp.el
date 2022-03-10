@@ -153,13 +153,6 @@ describing the last `islisp-load-file' or `islisp-compile-file' command.")
   (setq inferior-islisp-buffer "*inferior-islisp*")
   (pop-to-buffer-same-window "*inferior-islisp*"))
 
-;; islisp-mode keybindings
-(define-key islisp-mode-map (kbd "M-C-x") 'inferior-islisp-eval-defun)
-(define-key islisp-mode-map (kbd "C-x C-e") 'inferior-islisp-eval-last-sexp)
-(define-key islisp-mode-map (kbd "C-c C-r") 'inferior-islisp-eval-region)
-(define-key islisp-mode-map (kbd "C-c C-l") 'inferior-islisp-load-file)
-(define-key islisp-mode-map (kbd "C-c C-k") 'inferior-islisp-compile-file)
-
 (define-derived-mode inferior-islisp-mode comint-mode "Inferior ISLisp"
   ""
   (islisp-mode-variables)

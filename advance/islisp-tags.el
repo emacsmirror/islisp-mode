@@ -8,7 +8,6 @@
 ;; Version: 0.2.0
 ;; Keywords: islisp, lisp, programming
 ;; URL: https://gitlab.com/sasanidas/islisp-mode
-;; Package-Requires: ((emacs "26.3"))
 ;; License: GPL-3.0-or-later
 
 ;; This program is free software; you can redistribute it and/or modify
@@ -54,6 +53,9 @@
 ;;     regex-str))
 
 (defun islisp-tags--generate-in (directory &optional tags-location append)
+  "Internal function to generate tags in DIRECTORY.
+If TAGS-LOCATION is non nil use it instead of the default value.
+If APPEND is non nil append the results to a created etags file."
   (let ((etags-format "etags --language=lisp %s" ))
     (when tags-location (setf etags-format (concat etags-format
 						   (format " -o %s" tags-location))))
@@ -89,16 +91,17 @@
 
 
 (defun islisp-tags--update-library (root)
-  (if (boundp easy-islisp-library-directory)
-      (islisp-tags--generate-in easy-islisp-library-directory (concat root "TAGS") t)
-    (error "The current implementation doesn't support library files.")))
+  "Internal function that generate TAGs in ROOT from islisp files.
+For now, only works with the value in
+`easy-islisp-library-directory'."
+  (if (boundp 'easy-islisp-library-directory)
+      (islisp-tags--generate-in easy-islisp-library-directory
+		     (expand-file-name "TAGS" root) t)
+    (error "The current implementation doesn't support library files")))
 
-(define-key islisp-mode-map (kbd "C-c C-w") 'islisp-tags-symbols-navigate)
-(define-key islisp-mode-map (kbd "C-c TAB") 'islisp-tags-autocomplete)
-(define-key islisp-mode-map (kbd "C-c C-e") 'islisp-tags-generate)
-
-
-
+(islisp-mode-load-keymap `((,(kbd "C-c C-w") . islisp-tags-symbols-navigate)
+			   (,(kbd "C-c TAB") . islisp-tags-autocomplete)
+			   (,(kbd "C-c C-e") . islisp-tags-generate)))
 
 ;;;; The requires
 (provide 'islisp-tags)
