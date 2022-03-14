@@ -58,9 +58,13 @@ directory."
 (defvar islisp-mode-map (make-sparse-keymap))
 
 (defun islisp-mode-load-keymap (key-list)
+  "Fill `islisp-mode-map' keys from KEY-LIST.
+It only binds the symbol if the key is not bound."
   (cl-loop for (key . def) in key-list
-	   when	(or (null (lookup-key islisp-mode-map key))
-		    (= (lookup-key islisp-mode-map key) 1))
+	   for key-look = (lookup-key islisp-mode-map key)
+	   when	(or (null key-look)
+		    (and (numberp key-look)
+			 (=  key-look 1)))
 	   do (define-key islisp-mode-map key def)))
 
 (defun islisp-use-implementation ()
@@ -264,8 +268,7 @@ directory."
   "Start a ISLisp REPL or switch to it."
   (interactive)
   (require 'inferior-islisp)
-  (if (and (stringp inferior-islisp-buffer)
-	   (get-buffer inferior-islisp-buffer))
+  (if-let ((buffer (get-buffer inferior-islisp-buffer )))
       (pop-to-buffer inferior-islisp-buffer)
     (inferior-islisp)))
 
@@ -286,8 +289,11 @@ directory."
 			  ["Tag auto-complete" islisp-tags-autocomplete t  :keys "C-c TAB"])))
   (islisp-use-implementation))
 
-(advice-add 'islisp-mode :after (lambda ()
-			    (setq-local font-lock-keywords-case-fold-search t)))
+(defun islisp-mode--local-keywords ()
+  "Set keyword-case-fold-search to t."
+  (setq-local font-lock-keywords-case-fold-search t))
+
+(advice-add 'islisp-mode :after 'islisp-mode--local-keywords)
 
 (add-to-list 'auto-mode-alist '("\\.lsp\\'" . islisp-mode))
 
