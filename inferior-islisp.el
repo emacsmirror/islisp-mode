@@ -64,7 +64,7 @@
 (defvar inferior-islisp-mode-hook '()
   "Hook for customising Inferior ISLisp mode.")
 
-(defvar inferior-islisp-buffer nil
+(defvar inferior-islisp-buffer "*inferior-islisp*"
   "Inferior ISLisp buffer name.")
 
 (defvar inferior-islisp-prev-l-c-dir-file nil
@@ -140,18 +140,18 @@ describing the last `islisp-load-file' or `islisp-compile-file' command.")
 				  inferior-islisp-source-modes nil))
   (comint-check-source file-name)
   (setq inferior-islisp-prev-l-c-dir-file (cons (file-name-directory    file-name)
-						(file-name-nondirectory file-name)))
+				 (file-name-nondirectory file-name)))
   (comint-send-string (inferior-islisp-proc) (concat "(compile-file \"" file-name "\")\n")))
 
+;;;###autoload
 (defun inferior-islisp ()
   "Launch the `inferior-islisp' comint buffer."
   (interactive)
-  (when (not (comint-check-proc "*inferior-islisp*"))
+  (unless (comint-check-proc "*inferior-islisp*")
     (set-buffer (apply (function make-comint)
 		       "inferior-islisp" inferior-islisp-command-line))
     (inferior-islisp-mode))
-  (setq inferior-islisp-buffer "*inferior-islisp*")
-  (pop-to-buffer-same-window "*inferior-islisp*"))
+  (pop-to-buffer-same-window (get-buffer-create inferior-islisp-buffer)))
 
 (define-derived-mode inferior-islisp-mode comint-mode "Inferior ISLisp"
   ""
