@@ -263,11 +263,15 @@ It only binds the symbol if the key is not bound."
      (1 'font-lock-keyword-face)
      (3 'font-lock-function-name-face nil t))))
 
+(declare-function inferior-islisp "inferior-islisp")
+(defvar inferior-islisp-buffer )
+
 ;;;###autoload
 (defun islisp-repl()
   "Start a ISLisp REPL or switch to it."
   (interactive)
-  (require 'inferior-islisp)
+  (unless (require 'inferior-islisp nil t)
+    (user-error "Package inferior-islisp must be installed"))
   (if-let ((buffer (get-buffer inferior-islisp-buffer )))
       (pop-to-buffer inferior-islisp-buffer)
     (inferior-islisp)))
