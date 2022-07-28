@@ -23,6 +23,20 @@
 
 ;;;; The requires
 (require 'ert)
+(require 'cl-lib)
+(require 'islisp-mode)
+(require 'inferior-islisp)
+
+(ert-deftest islisp-inferior-launch-test ()
+  "Make sure that the inferior buffer is created"
+  (islisp-repl)
+  (should (bufferp (get-buffer inferior-islisp-buffer))))
+
+(ert t)
+
+
+
+
 
 (provide 'test-islisp-mode.el)
 ;;; test-islisp-mode.el ends here

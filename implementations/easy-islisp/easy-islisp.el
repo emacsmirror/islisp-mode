@@ -107,7 +107,7 @@
 	  (insert region-content)
 	  (delete-file com-file)
 	  nil))
-    (error "The package inferior-islisp is required format the buffer.")))
+    (error "The package inferior-islisp is required format the buffer")))
 
 (defun easy-islisp-format-buffer ()
   "Format the current buffer using the easy-islisp library formatter."
@@ -123,7 +123,7 @@
 	 (inferior-islisp-proc)
 	 (format "(macroexpand-all (quote %s))\n"
 		 (buffer-substring-no-properties start end))))
-    (error "The package inferior-islisp is required to macroexpand the region.")))
+    (error "The package inferior-islisp is required to macroexpand the region")))
 
 (defun easy-islisp-macroexpand-sexp (&optional _and-go)
   "Macroexpand the current sexp."
@@ -140,6 +140,7 @@
     (easy-islisp-macroexpand-region start (+ (point) 1))))
 
 (defun easy-islisp-init-font-lock ()
+  "Add EasyIslisp font keywords to `islisp-mode'."
   (let ((new-font-lock (cl-concatenate
 			'list islisp-general-keywords easy-islisp-keywords)))
     (setf islisp-font-lock-keywords
