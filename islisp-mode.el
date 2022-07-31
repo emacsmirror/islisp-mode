@@ -71,8 +71,7 @@ It only binds the symbol if the key is not bound."
   "Initialise the `islisp-current-implementation'."
   (funcall #'require islisp-current-implementation)
   (funcall (intern
-	    (apply 'concat `(,(format "%S" islisp-current-implementation) "-init")))))
-
+	    (apply #'concat `(,(format "%S" islisp-current-implementation) "-init")))))
 
 (defun islisp--create-mode-menu ()
   "Internal function to create or recreate the plisp-mode menu."
@@ -160,7 +159,6 @@ It only binds the symbol if the key is not bound."
 		       (,(kbd "C-c C-k") . inferior-islisp-compile-file)))
   (unless (boundp 'islisp-menu)
     (islisp--create-mode-menu)))
-
 
 (defun islisp-set-fl-keys ()
   "Set the local font keywords."
@@ -278,7 +276,7 @@ It only binds the symbol if the key is not bound."
 
 ;;;###autoload
 (define-derived-mode islisp-mode prog-mode "ISLisp"
-  "Major mode for editing ISLisp code"
+  "Major mode for editing ISLisp code."
   (islisp-mode-variables)
   (setq-local
    find-tag-default-function 'lisp-find-tag-default
@@ -291,16 +289,10 @@ It only binds the symbol if the key is not bound."
 			  ["Generate TAGS"  islisp-tags-generate t :keys "C-c C-e"]
 			  ["Symbols navigation" islisp-tags-symbols-navigate t  :keys "C-c C-w"]
 			  ["Tag auto-complete" islisp-tags-autocomplete t  :keys "C-c TAB"])))
-  (islisp-use-implementation))
-
-(defun islisp-mode--local-keywords ()
-  "Set keyword-case-fold-search to t."
+  (islisp-use-implementation)
   (setq-local font-lock-keywords-case-fold-search t))
 
-(advice-add 'islisp-mode :after 'islisp-mode--local-keywords)
-
 (add-to-list 'auto-mode-alist '("\\.lsp\\'" . islisp-mode))
-
 
 (provide 'islisp-mode)
 ;;; islisp-mode.el ends here
