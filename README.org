@@ -74,6 +74,9 @@ To add a custom location to the load path:
 *** Easy-ISLisp
      [[https://github.com/sasagawa888/eisl][Easy-ISLisp(EISL)]] is an interpreter and compiler compatible with the ISLisp standard. EISL was written by Kenichi Sasagawa. 
 
+     WARNING: This major-mode binds the .lsp files to ISLisp mode
+     If you are a Common Lisp hacker that is using Lisp Server Pages,
+     feel free to remove the last line of the islisp-mode.el file
 **** Features
      + File compilation
      + Buffer formatting

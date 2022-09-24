@@ -28,6 +28,9 @@
 
 ;; Quick intro
 ;;
+;; It is recommended to use inferior-islisp-mode~ alongside islisp-mode for better integration.
+;; REPL integration for the ISLisp programming language
+;; It contains a simple but useful REPL and some common functions to interact with it.
 
 ;;; Code:
 
@@ -154,7 +157,6 @@ describing the last `islisp-load-file' or `islisp-compile-file' command.")
   (pop-to-buffer-same-window (get-buffer-create inferior-islisp-buffer)))
 
 (define-derived-mode inferior-islisp-mode comint-mode "Inferior ISLisp"
-  ""
   (islisp-mode-variables)
   (setq-local comint-prompt-regexp inferior-islisp-prompt
 	      mode-line-process '(":%s")

@@ -31,7 +31,7 @@
 ;;; Code:
 
 ;;;; The requires
-(require 'eww)
+(require 'browse-url)
 
 
 (defcustom islisp-hyperdraft-root "https://nenbutsu.github.io/ISLispHyperDraft/islisp-v23.html"
@@ -186,7 +186,7 @@ something like \"file:/usr/local/doc/HyperDraft/islisp-v23.html\"."
 		    (mapcar #'car islisp-hyperdraft-symbols)
 		    nil t csymbol)
 		   islisp-hyperdraft-symbols)))
-    (eww (concat islisp-hyperdraft-root (cdr current-symbol)))))
+    (browse-url (concat islisp-hyperdraft-root (cdr current-symbol)))))
 
 
 (provide 'islisp-hyperdraft)
